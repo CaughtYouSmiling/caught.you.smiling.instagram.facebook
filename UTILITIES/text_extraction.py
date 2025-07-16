@@ -9,7 +9,7 @@ import pytesseract
 # Path to Tesseract OCR executable (update this to your system's path if needed)
 pytesseract.pytesseract.tesseract_cmd = r'C:/Program Files/Tesseract-OCR/tesseract.exe'
 video_editing_folder_path = 'VIDEO_EDITING/'
-csv_file_path = os.path.join(video_editing_folder_path, 'extracted_texts_videos.csv')
+csv_file_path = os.path.join(video_editing_folder_path, 'extracted_texts_videos_2.csv')
 # Set up logging configuration
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -319,7 +319,7 @@ def process_all_videos():
     
     # # Remove the previous day's reel before starting today's processing
     # # remove_previous_reel(reel_number)
-    for reel_number in range(1,176):
+    for reel_number in range(176, 348):
         # Get the input video from video folder.
         print(f"Processing reel number: {reel_number}")
         input_video_path = get_input_video(reel_number)
