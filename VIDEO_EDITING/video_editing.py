@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 # Folder paths and common parameters
 # Text Related Parameters
 font_path = 'VIDEO_EDITING/FONTS/seguiemj_bold.ttf'
-font_size = 50
+font_size = 45
 
 # Video Related Parameters
 scale = 4
@@ -271,7 +271,23 @@ def process_video(input_video_path, reel_number):
     def add_audio_to_video(input_path, output_path):
         with VideoFileClip(input_video_path) as original_clip, VideoFileClip(input_path) as cropped_clip:
             final_clip = cropped_clip.with_audio(original_clip.audio)
-            final_clip.write_videofile(output_path, codec="libx264", audio_codec="aac", bitrate="5000k", audio_bitrate="192k")
+            fps = original_clip.fps  # Detect the FPS of the enhanced video
+            final_clip.write_videofile(
+                output_path,
+                codec="libx264",
+                audio_codec="aac",
+                bitrate="5000k",
+                audio_bitrate="256k",
+                fps=fps,  # Use detected FPS
+                ffmpeg_params=[
+                    "-crf", "14",
+                    "-preset", "veryslow",
+                    "-pix_fmt", "yuv420p",
+                    "-g", str(int(fps * 2)),       # GOP: 2 seconds
+                    "-sc_threshold", "0",
+                    "-movflags", "+faststart"
+                ]
+            )
     
     def crop_video():
         global crop_x, crop_y, crop_w, crop_h
@@ -349,7 +365,7 @@ def process_video(input_video_path, reel_number):
                 new_width, new_height = int((reel_height) * aspect_ratio), reel_height
 
             temp_width = new_width
-            temp_height = new_height - 50
+            temp_height = new_height - 300
             new_width = new_width
             new_height = new_height
             if new_width <= 0:
@@ -363,7 +379,7 @@ def process_video(input_video_path, reel_number):
             resized_frame = cv2.resize(frame, (new_width, new_height))
             # print("resized_frame = ",resized_frame)
             black_background = np.zeros((reel_height, reel_width, 3), dtype=np.uint8)
-            center_x, center_y = (reel_width - new_width) // 2, int((reel_height - new_height) // 1.2)
+            center_x, center_y = (reel_width - new_width) // 2, int((reel_height - new_height) // 1.1)
             
             # Round the new height to the nearest 500
             rounded_height = 500 * round(new_height / 500)
@@ -378,7 +394,30 @@ def process_video(input_video_path, reel_number):
             # print("center_x = ", center_x)
             # print("center_y = ", center_y)
             
-            black_background[center_y:center_y + new_height, center_x:center_x + new_width] = resized_frame
+            # Create an RGBA image for rounded corners
+            rounded_frame = np.zeros((new_height, new_width, 4), dtype=np.uint8)
+
+            # Convert frame to RGBA
+            resized_frame_rgba = cv2.cvtColor(resized_frame, cv2.COLOR_BGR2BGRA)
+
+            # Create rounded mask
+            mask = np.zeros((new_height, new_width, 4), dtype=np.uint8)
+            mask[:, :, 3] = 255  # Set alpha to fully opaque
+
+            radius = min(new_width, new_height) // 25  # Adjust roundness
+            pil_mask = Image.fromarray(mask)
+            draw = ImageDraw.Draw(pil_mask)
+            draw.rounded_rectangle((0, 0, new_width, new_height), radius=radius, fill=(255, 255, 255, 255))
+            mask = np.array(pil_mask)
+
+            # Apply rounded corners mask
+            rounded_frame = cv2.bitwise_and(resized_frame_rgba, mask)
+
+            # Convert back to BGR (discard alpha since black bg is used)
+            rounded_frame_bgr = cv2.cvtColor(rounded_frame, cv2.COLOR_BGRA2BGR)
+
+            # Place the rounded video on the black background
+            black_background[center_y:center_y + new_height, center_x:center_x + new_width] = rounded_frame_bgr
             
             output_reel.write(black_background)
 
@@ -410,8 +449,8 @@ def process_video(input_video_path, reel_number):
         text_overlay_clip = ImageClip(np.array(text_overlay_image_resized), duration=video.duration)
 
         # Repositioning
-        text_y = center_y - text_overlay_height - 40
-        text_x = center_x + 35
+        text_y = center_y - text_overlay_height - 20
+        text_x = center_x + 20
         text_overlay_clip = text_overlay_clip.with_position((text_x,text_y))
 
         # Merge text image with video
@@ -440,7 +479,7 @@ def process_video(input_video_path, reel_number):
         
         # Resize overlay image if needed
         overlay_image_aspect_ratio = overlay_image_np.shape[1] / overlay_image_np.shape[0]
-        overlay_image_width = overlay_image_np.shape[1] - 450
+        overlay_image_width = overlay_image_np.shape[1] - 300
         overlay_image_height = int(overlay_image_width / overlay_image_aspect_ratio)
         overlay_image = overlay_image.resize((int(overlay_image_width),int(overlay_image_height)))  # Adjust size as needed
 
@@ -451,7 +490,7 @@ def process_video(input_video_path, reel_number):
         overlay_image_clip = ImageClip(overlay_image_np, duration=video.duration)
 
         # Set the overlay image position (adjust as needed)
-        image_y = text_y - overlay_image_height - 20
+        image_y = text_y - overlay_image_height - 15
         overlay_image_clip = overlay_image_clip.with_position(("center", image_y))
 
         # Merge overlay image with video
