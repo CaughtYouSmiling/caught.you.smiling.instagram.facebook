@@ -137,7 +137,7 @@ def create_media_object(conn, caption):
         "upload_type": "resumable",
         "caption": caption,
         "thumb_offset": random.randint(5, 10),
-        "audio_name": "wildlife.animal.documentaries",
+        "audio_name": "we.made.you.smile",
         "share_to_feed": True,
         "access_token": ACCESS_TOKEN
     }
@@ -298,18 +298,17 @@ def main():
     caption_part1 = read_text_from_csv(reel_number)
     caption_part2 = read_caption(caption_file)
     prompt = (
-        f"The video is a documentary-style short about this animal: {caption_part1}.\n"
-        "Write ONE highly engaging, emotionally compelling Instagram caption (maximum 2000 characters) that provides interesting, little-known, or mind-blowing facts about the animal.\n"
+        f"The video is a reel with this core idea or theme: {caption_part1}.\n"
+        "Write ONE highly engaging, emotionally uplifting Instagram caption (maximum 1300 characters) that captures the essence of the video and makes people smile or feel good.\n"
         "Use the statement only as background — do NOT copy it into the caption.\n"
         "The caption must:\n"
-        "- Be in fluent, conversational English.\n"
-        "- Educate the viewer in an entertaining, storytelling tone that feels natural.\n"
-        "- Include emojis to enhance tone and readability.\n"
-        "- Use strong SEO-friendly keywords naturally in the caption that help it rank for search terms like:\n"
-        "  'wildlife documentary', 'animal facts', 'wildlife reels', 'rare animals', 'nature lovers', 'animal planet', and species-specific terms (e.g. 'snow leopard facts', 'eagle hunt', etc.).\n"
-        "- End with up to 10 relevant, trending hashtags related to the animal, wildlife, nature, or conservation.\n"
+        "- Be written in fluent, conversational English.\n"
+        "- Entertain, inspire, or emotionally move the viewer in a way that spreads positivity and brings a smile to their face.\n"
+        "- Feel like storytelling — light, relatable, and heartfelt — with a strong emotional hook or surprising insight.\n"
+        "- Include emojis to enhance tone, warmth, and readability.\n"
+        "- End with up to 10 trending, relevant hashtags related to positivity, smiles, feel-good vibes, or the specific theme of the video.\n"
         "STRICT RULE: Do NOT include any preface, bullet points, or explanations like 'Here’s your caption'. Output ONLY the caption content — as it should appear on Instagram.\n"
-        "HARD LIMIT: The total caption must not exceed 2000 characters, including emojis and hashtags."
+        "HARD LIMIT: The total caption must not exceed 1300 characters, including emojis and hashtags."
     )
 
     caption_part1 = gemini_generate_text(prompt)
