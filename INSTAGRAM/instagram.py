@@ -137,7 +137,7 @@ def create_media_object(conn, caption):
         "upload_type": "resumable",
         "caption": caption,
         "thumb_offset": random.randint(5, 10),
-        "audio_name": "we.made.you.smile",
+        "audio_name": "caught.you.smiling",
         "share_to_feed": True,
         "access_token": ACCESS_TOKEN
     }

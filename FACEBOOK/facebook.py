@@ -220,7 +220,7 @@ def publish_media_object(conn, media_id, caption):
         "upload_phase":"finish",
         "video_state":"PUBLISHED",
         "description":caption,
-        "title":"we.made.you.smile",
+        "title":"caught.you.smiling",
         "access_token": ACCESS_TOKEN
     }
 
