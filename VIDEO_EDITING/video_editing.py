@@ -325,7 +325,7 @@ def process_video(input_video_path, reel_number):
             # Crop the frame using the detected area
             cropped_frame = frame[y:y + h, x:x + w]
             # Apply enhancements: sharpening, contrast, and color enhancement
-            # cropped_frame = sharpen_image(cropped_frame)
+            cropped_frame = sharpen_image(cropped_frame)
             cropped_frame = adjust_contrast(cropped_frame)
             cropped_frame = enhance_color(cropped_frame)
             cropped_frame = enhance_video(cropped_frame)
@@ -370,7 +370,7 @@ def process_video(input_video_path, reel_number):
             new_height = new_height
             if new_width <= 0:
                 new_width = temp_width
-            if new_height <= 0:
+            if new_height <= 1200:
                 new_height = temp_height
             
             # print("new_width = ",new_width)
@@ -379,7 +379,7 @@ def process_video(input_video_path, reel_number):
             resized_frame = cv2.resize(frame, (new_width, new_height))
             # print("resized_frame = ",resized_frame)
             black_background = np.zeros((reel_height, reel_width, 3), dtype=np.uint8)
-            center_x, center_y = (reel_width - new_width) // 2, int((reel_height - new_height) // 1.1)
+            center_x, center_y = (reel_width - new_width) // 2, int((reel_height - new_height) // 1.0)
             
             # Round the new height to the nearest 500
             rounded_height = 500 * round(new_height / 500)
@@ -393,31 +393,9 @@ def process_video(input_video_path, reel_number):
             
             # print("center_x = ", center_x)
             # print("center_y = ", center_y)
-            
-            # Create an RGBA image for rounded corners
-            rounded_frame = np.zeros((new_height, new_width, 4), dtype=np.uint8)
-
-            # Convert frame to RGBA
-            resized_frame_rgba = cv2.cvtColor(resized_frame, cv2.COLOR_BGR2BGRA)
-
-            # Create rounded mask
-            mask = np.zeros((new_height, new_width, 4), dtype=np.uint8)
-            mask[:, :, 3] = 255  # Set alpha to fully opaque
-
-            radius = min(new_width, new_height) // 25  # Adjust roundness
-            pil_mask = Image.fromarray(mask)
-            draw = ImageDraw.Draw(pil_mask)
-            draw.rounded_rectangle((0, 0, new_width, new_height), radius=radius, fill=(255, 255, 255, 255))
-            mask = np.array(pil_mask)
-
-            # Apply rounded corners mask
-            rounded_frame = cv2.bitwise_and(resized_frame_rgba, mask)
-
-            # Convert back to BGR (discard alpha since black bg is used)
-            rounded_frame_bgr = cv2.cvtColor(rounded_frame, cv2.COLOR_BGRA2BGR)
 
             # Place the rounded video on the black background
-            black_background[center_y:center_y + new_height, center_x:center_x + new_width] = rounded_frame_bgr
+            black_background[center_y:center_y + new_height, center_x:center_x + new_width] = resized_frame
             
             output_reel.write(black_background)
 
@@ -450,7 +428,7 @@ def process_video(input_video_path, reel_number):
 
         # Repositioning
         text_y = center_y - text_overlay_height - 20
-        text_x = center_x + 20
+        text_x = center_x + 25
         text_overlay_clip = text_overlay_clip.with_position((text_x,text_y))
 
         # Merge text image with video
@@ -479,7 +457,7 @@ def process_video(input_video_path, reel_number):
         
         # Resize overlay image if needed
         overlay_image_aspect_ratio = overlay_image_np.shape[1] / overlay_image_np.shape[0]
-        overlay_image_width = overlay_image_np.shape[1] - 300
+        overlay_image_width = overlay_image_np.shape[1] - 350
         overlay_image_height = int(overlay_image_width / overlay_image_aspect_ratio)
         overlay_image = overlay_image.resize((int(overlay_image_width),int(overlay_image_height)))  # Adjust size as needed
 
