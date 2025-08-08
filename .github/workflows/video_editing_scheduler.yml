@@ -9,7 +9,7 @@ on:
 jobs:
   run-script:
     runs-on: ubuntu-latest
-    timeout-minutes: 66
+    timeout-minutes: 120
     steps:
       # Checkout the repository
       - name: Checkout Code
