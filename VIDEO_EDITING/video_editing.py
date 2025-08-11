@@ -365,7 +365,7 @@ def process_video(input_video_path, reel_number):
                 new_width, new_height = int((reel_height) * aspect_ratio), reel_height
 
             temp_width = new_width
-            temp_height = new_height - 300
+            temp_height = new_height - 200
             new_width = new_width
             new_height = new_height
             if new_width <= 0:
