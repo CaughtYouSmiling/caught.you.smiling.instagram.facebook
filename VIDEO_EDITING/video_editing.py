@@ -18,7 +18,7 @@ font_path = 'VIDEO_EDITING/FONTS/seguiemj_bold.ttf'
 font_size = 45
 
 # Video Related Parameters
-scale = 4
+scale = 1
 video_folder_path = 'VIDEOS'
 reel_folder_path = 'REELS'
 reel_upload_folder_path = 'REEL_TO_UPLOAD'
@@ -328,7 +328,7 @@ def process_video(input_video_path, reel_number):
             cropped_frame = sharpen_image(cropped_frame)
             cropped_frame = adjust_contrast(cropped_frame)
             cropped_frame = enhance_color(cropped_frame)
-            cropped_frame = enhance_video(cropped_frame)
+            # cropped_frame = enhance_video(cropped_frame)
 
             # Write the enhanced, cropped frame
             out.write(cropped_frame)
