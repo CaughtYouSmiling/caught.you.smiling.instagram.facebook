@@ -366,13 +366,13 @@ def process_video(input_video_path, reel_number):
 
             temp_width = new_width
             temp_height = new_height - 200
-            new_width = temp_width
-            new_height = temp_height
             if new_width <= 0:
                 new_width = temp_width
             if temp_height <= 1200:
                 new_height = new_height
-            
+            else:
+                new_height = temp_height
+
             # print("new_width = ",new_width)
             # print("new_height = ",new_height)
             
