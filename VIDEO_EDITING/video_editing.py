@@ -365,12 +365,12 @@ def process_video(input_video_path, reel_number):
                 new_width, new_height = int((reel_height) * aspect_ratio), reel_height
 
             temp_width = new_width
-            temp_height = new_height - 200
+            temp_height = new_height
+            new_width = new_width - 100
+            new_height = new_height - 200
             if new_width <= 0:
                 new_width = temp_width
-            if temp_height <= 1200:
-                new_height = new_height
-            else:
+            if new_height <= 1200:
                 new_height = temp_height
 
             # print("new_width = ",new_width)
@@ -428,8 +428,7 @@ def process_video(input_video_path, reel_number):
 
         # Repositioning
         text_y = center_y - text_overlay_height - 20
-        text_x = center_x + 25
-        text_overlay_clip = text_overlay_clip.with_position((text_x,text_y))
+        text_overlay_clip = text_overlay_clip.with_position(("center",text_y))
 
         # Merge text image with video
         final_clip = CompositeVideoClip([video, text_overlay_clip])
@@ -457,7 +456,7 @@ def process_video(input_video_path, reel_number):
         
         # Resize overlay image if needed
         overlay_image_aspect_ratio = overlay_image_np.shape[1] / overlay_image_np.shape[0]
-        overlay_image_width = overlay_image_np.shape[1] - 350
+        overlay_image_width = overlay_image_np.shape[1] - 200
         overlay_image_height = int(overlay_image_width / overlay_image_aspect_ratio)
         overlay_image = overlay_image.resize((int(overlay_image_width),int(overlay_image_height)))  # Adjust size as needed
 
